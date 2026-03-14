@@ -98,3 +98,4 @@ Both are useful depending on the task.
 Current Earth embedding models aren't optimized for compression. Their vectors contain redundant dimensions, meaning the real information content is much lower than the number of features in the embedding. Can we test this? How many independent degrees of freedom are there and what are they?
 
 Intrinsic dimension = how many independent degrees of freedom the data really has.
+
