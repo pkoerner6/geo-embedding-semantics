@@ -14,7 +14,7 @@ from PIL import Image
 
 
 SEED = 42
-N_PER_CLASS = 500 # examples per class from EuroSAT
+N_PER_CLASS = 1000 # examples per class from EuroSAT
 
 # The 10 Sentinel-2 L2A bands Clay v1.5 was trained on.
 CLAY_BANDS: list[str] = [
