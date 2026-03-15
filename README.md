@@ -30,13 +30,7 @@ The following directions were given as optional structure.
 
 ### Idea 1: Semantics vs. Visual Similarity
 
-**Maps to:** From chips to concepts + How far do linear tools go?
-
 **Question:** Do cosine nearest neighbors retrieve semantically similar tiles, or just visually similar ones?
-
-This tests the foundational claim directly. Two tiles can look alike (same colors, textures) without sharing semantics (a beach vs. a salt flat), and two tiles can share semantics without looking alike (a dense European city vs. a South Asian city).
-
-**Prior work:** [Blumenstiel et al. 2024](https://arxiv.org/abs/2403.02059) shows FM embeddings outperform RGB baselines for retrieval on BigEarthNet and ForestNet. However, no paper has done a controlled ablation comparing FM cosine neighbors against raw pixel/spectral baselines on the same semantic retrieval task. The gap between visual and semantic similarity as a function of scene type is open.
 
 **Steps:**
 1. Sample a diverse set of query tiles (e.g. solar farms, ports, deforestation fronts, urban grids).
@@ -45,19 +39,11 @@ This tests the foundational claim directly. Two tiles can look alike (same color
 4. Compare against a plain visual baseline (raw spectral vectors or JPEG features) to isolate the FM's contribution.
 5. Identify failure cases: where does retrieval return visually similar but semantically wrong results?
 
-**Extension:** Use a linear SVM on embeddings to classify land cover. Then deliberately stress-test it: mixed-use tiles, unusual viewpoints, cross-geographic examples (same semantic class, different appearance). This probes the "how far do linear tools go?" question directly.
-
 ---
 
 ### Idea 2: Semantic Arithmetic
 
-**Maps to:** From chips to concepts
-
-**Question:** Do geo embeddings support semantic vector arithmetic? For example: `city - buildings + water ≈ port`
-
-This is the `king - man + woman = queen` analogy applied to geo space.
-
-**Prior work:** [Tile2Vec (Jean et al., AAAI 2019)](https://arxiv.org/abs/1805.02855) demonstrated qualitative geo analogies with a CNN encoder, showing e.g. `rural NYC - rural SF + urban SF ≈ urban NYC`. However, these results are illustrative and not benchmarked, and the model is a shallow CNN from 2019. No paper has tested whether modern transformer-based FMs (Clay, SatCLIP, ViT-MAE) preserve this property.
+**Question:** Do geo embeddings support semantic vector arithmetic? For example: $city - buildings + water \approx port$. This is the $king - man + woman = queen$ analogy applied to geo space.
 
 **Steps:**
 1. Define semantic directions as the difference between class mean embeddings (e.g. mean("industrial") - mean("forest")).
@@ -65,13 +51,9 @@ This is the `king - man + woman = queen` analogy applied to geo space.
 3. Check whether the result shifts semantically as expected (removing "vegetation" direction should retrieve a more built-up version).
 4. Test compositionality: can two directions be added at once?
 
-**Caveat:** Hard to evaluate without ground truth. Focus on qualitative examples and visualizations.
-
 ---
 
-### Idea 3: Is "Difficulty" a Semantic Property?
-
-**Maps to:** What does reconstruction difficulty tell you?
+### Idea 3: Is "Difficulty" a Semantic Property? (not implemented)
 
 **Question:** Does the ELLE signal work because embeddings directly encode training difficulty or because difficulty correlates with semantic region membership?
 
@@ -80,29 +62,19 @@ This is the `king - man + woman = queen` analogy applied to geo space.
 - **Hypothesis A (semantic region effect):** Hard tiles cluster in semantically complex regions (cluttered scenes, unusual textures). The probe learns "complex urban direction -> high loss." It is a soft semantic classifier, not a difficulty detector. Loss is predictable because difficulty is a semantic property.
 - **Hypothesis B (direct encoding):** The embedding encodes fine-grained within-category difficulty. Even among all "urban" tiles, the probe distinguishes a cluttered intersection from a simple grid street.
 
-**Prior work:** The ELLE signal is described in a blog post. The ELLE notebook validates the signal across modalities but never tests these two hypotheses. 
-
 **Steps:**
-1. Reproduce the ELLE probe on a geo dataset: Clay or ViT-MAE embeddings with a proxy for loss (reconstruction error, or JPEG file size as a crude approximation).
+1. Reproduce the ELLE probe on a geo dataset: Clay embeddings with a proxy for loss.
 2. Cluster embeddings by semantic class (land cover labels if available, or k-means as proxy).
 3. **Within-cluster test:** For each cluster, run the ELLE probe on samples inside the cluster only. Does the probe still predict relative loss within the cluster?
    - If yes: Hypothesis B -> fine-grained difficulty is encoded beyond semantics.
    - If no: Hypothesis A -> the probe is essentially a semantic classifier, and loss is a side effect.
-4. Plot per-cluster r² to see which semantic regions drive the signal.
-
-**Why this test is clean:** Holding semantic category constant removes the confound. Any residual predictive signal must come from something other than "what type of scene is this."
-
-**Application:** If Hypothesis A holds, high-loss embeddings can be used as a signal for semantically complex or ambiguous tiles -> useful for data quality control and filtering edge cases.
+4. Plot per-cluster $r^2$ to see which semantic regions drive the signal.
 
 ---
 
-### Idea 4: Temporal Trajectory of Change
-
-**Maps to:** From chips to concepts (change patterns)
+### Idea 4: Temporal Trajectory of Change (not implemented)
 
 **Question:** When a region undergoes land-use change (e.g. forest to agriculture), is the transition in embedding space smooth or discontinuous? Does the post-transition embedding retain a "memory" of the prior state?
-
-**Prior work:** [TESSERA (2025)](https://arxiv.org/abs/2506.20380) and [Google Satellite Embedding V1](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL) both provide annual per-pixel embeddings. Google's documentation explicitly mentions using the angle between yearly embeddings for change detection. However, no paper has analyzed the geometry of these trajectories during change events: smoothness, step-function behavior, or whether post-transition embeddings cluster with their new or prior class.
 
 **Steps:**
 1. Find a region with documented land-use change (Global Forest Watch or a known deforestation site).
