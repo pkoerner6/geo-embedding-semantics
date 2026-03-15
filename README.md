@@ -4,12 +4,6 @@
 
 **How much semantic structure do geo foundation model embeddings actually encode, and what can simple linear tools extract from it?**
 
-- Time budget: ~5 hours
-- Deadline: March 15th EOD
-- Compute: CPU-only
-- Data & models: Public assets only (AlphaEarth embeddings, Clay, or any open FM/embeddings)
-- Deliverable: Notebook (or repo) + 1-page writeup
-
 The core bet: geo embeddings encode rich semantics extractable with simple tools (cosine similarity, linear SVMs). The question is how true this is, where it holds, and where it breaks.
 
 ---
