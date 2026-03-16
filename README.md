@@ -26,24 +26,11 @@ The following directions were given as optional structure.
 
 **Question:** Do cosine nearest neighbors retrieve semantically similar tiles, or just visually similar ones?
 
-**Steps:**
-1. Sample a diverse set of query tiles (e.g. solar farms, ports, deforestation fronts, urban grids).
-2. Retrieve top-k cosine neighbors from a large pool.
-3. Evaluate: do neighbors share the semantic category of the query, or just surface appearance?
-4. Compare against a plain visual baseline (raw spectral vectors or JPEG features) to isolate the FM's contribution.
-5. Identify failure cases: where does retrieval return visually similar but semantically wrong results?
-
 ---
 
 ### Idea 2: Semantic Arithmetic
 
 **Question:** Do geo embeddings support semantic vector arithmetic? For example: $city - buildings + water \approx port$. This is the $king - man + woman = queen$ analogy applied to geo space.
-
-**Steps:**
-1. Define semantic directions as the difference between class mean embeddings (e.g. mean("industrial") - mean("forest")).
-2. Apply arithmetic: take a query tile, add/subtract semantic directions, retrieve the nearest neighbor.
-3. Check whether the result shifts semantically as expected (removing "vegetation" direction should retrieve a more built-up version).
-4. Test compositionality: can two directions be added at once?
 
 ---
 
@@ -61,12 +48,6 @@ The following directions were given as optional structure.
 ### Idea 4: Temporal Trajectory of Change (not implemented)
 
 **Question:** When a region undergoes land-use change (e.g. forest to agriculture), is the transition in embedding space smooth or discontinuous? Does the post-transition embedding retain a "memory" of the prior state?
-
-**Steps:**
-1. Find a region with documented land-use change (Global Forest Watch or a known deforestation site).
-2. Embed the same tile at multiple time steps (before, during, after change).
-3. Plot the trajectory in 2D (PCA or UMAP). Is it a smooth path or a step?
-4. Compare: do post-transition embeddings cluster with other tiles of the same new type, or do they remain outliers, retaining a signature of their history?
 
 ---
 
