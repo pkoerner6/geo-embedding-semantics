@@ -47,22 +47,14 @@ The following directions were given as optional structure.
 
 ---
 
-### Idea 3: Is "Difficulty" a Semantic Property? (not implemented)
+### Idea 3: Is "Difficulty" a Semantic Property?
 
-**Question:** Does the ELLE signal work because embeddings directly encode training difficulty or because difficulty correlates with semantic region membership?
+**Question:** Does the ELLE signal work because embeddings directly encode training difficulty, or is it mostly explained by semantic class membership?
 
-**Background:** The ELLE finding ([blog post](https://devlogs.lgnd.ai/posts/2026-03-01-self-aware-embeddings/)) is that a simple linear probe `predicted_loss = w · embedding + b` predicts a model's pretraining loss with high correlation (r ≈ 0.89 for ViT-MAE). Two competing explanations:
+**Background:** The ELLE finding ([blog post](https://devlogs.lgnd.ai/posts/2026-03-01-self-aware-embeddings/)) is that a simple linear probe `predicted_loss = w · embedding + b` predicts a model's pretraining loss with high correlation ($r \approx 0.89$ for ViT-MAE). Using EuroSAT's ground-truth semantic labels, we can run a proper variance decomposition that is difficult without labeled data:
 
-- **Hypothesis A (semantic region effect):** Hard tiles cluster in semantically complex regions (cluttered scenes, unusual textures). The probe learns "complex urban direction -> high loss." It is a soft semantic classifier, not a difficulty detector. Loss is predictable because difficulty is a semantic property.
-- **Hypothesis B (direct encoding):** The embedding encodes fine-grained within-category difficulty. Even among all "urban" tiles, the probe distinguishes a cluttered intersection from a simple grid street.
-
-**Steps:**
-1. Reproduce the ELLE probe on a geo dataset: Clay embeddings with a proxy for loss.
-2. Cluster embeddings by semantic class (land cover labels if available, or k-means as proxy).
-3. **Within-cluster test:** For each cluster, run the ELLE probe on samples inside the cluster only. Does the probe still predict relative loss within the cluster?
-   - If yes: Hypothesis B -> fine-grained difficulty is encoded beyond semantics.
-   - If no: Hypothesis A -> the probe is essentially a semantic classifier, and loss is a side effect.
-4. Plot per-cluster $r^2$ to see which semantic regions drive the signal.
+- **Hypothesis A:** Apparent difficulty prediction is mostly explained by semantic class membership (hard tiles cluster in intrinsically hard classes and the probe is essentially a soft semantic classifier).
+- **Alternative B:** Embeddings contain residual difficulty information even after controlling for class membership. Within "Forest", a dense patch is still harder than a sparse one, and the embedding captures that.
 
 ---
 
